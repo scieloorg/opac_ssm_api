@@ -3,7 +3,7 @@ sphinx
 sphinx_rtd_theme
 nose
 coverage
-pypi-publisher
+pypi-publisher==0.0.4
 requests
 grpcio==1.0.4
 grpcio-tools==1.0.4
