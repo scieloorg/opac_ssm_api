@@ -4,5 +4,6 @@ sphinx_rtd_theme
 nose
 coverage
 pypi-publisher
+requests
 grpcio==1.0.4
 grpcio-tools==1.0.4

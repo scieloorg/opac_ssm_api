@@ -2,7 +2,13 @@
 import os
 
 import grpc
-import opac_pb2
+
+try:
+    import opac_pb2
+except ImportError:
+    from cli import generate_pb_files
+    generate_pb_files()
+    import opac_pb2
 
 
 class Client(object):
@@ -32,6 +38,9 @@ class Client(object):
         """
         fp = open(file, 'rb')
 
+        if not metadata:
+            metadata = {}
+
         if not isinstance(metadata, dict):
             raise ValueError('Param metadata must be a Dict.')
 
@@ -49,9 +58,8 @@ class Client(object):
         Params:
             :param id: string id of the asset (Mandatory)
         """
-
         if not isinstance(id, basestring):
-            raise ValueError('Param metadata must be a str|unicode.')
+            raise ValueError('Param id must be a str|unicode.')
 
         asset = self.stub.get_asset(opac_pb2.TaskId(id=id))
 
@@ -68,6 +76,8 @@ class Client(object):
         Params:
             :param id: string id of the asset (Mandatory)
         """
+        if not isinstance(id, basestring):
+            raise ValueError('Param id must be a str|unicode.')
 
         asset_info = self.stub.get_asset_info(opac_pb2.TaskId(id=id))
 
@@ -81,6 +91,9 @@ class Client(object):
         Params:
             :param id: string id of the task (Mandatory)
         """
+        if not isinstance(id, basestring):
+            raise ValueError('Param id must be a str|unicode.')
+
         task_state = self.stub.get_task_state(opac_pb2.TaskId(id=id))
 
         return task_state.state

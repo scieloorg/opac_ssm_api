@@ -36,5 +36,8 @@ setup(
     author='SciELO',
     install_requires=install_requires,
     dependency_links=dependency_links,
-    author_email='scielo@scielo.org'
-)
+    author_email='scielo@scielo.org',
+    entry_points="""
+    [console_scripts]
+        generate_pb_files = opac_ssm_api.cli:main
+    """)
