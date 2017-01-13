@@ -2,7 +2,13 @@
 import os
 
 import grpc
-import opac_pb2
+
+try:
+    import opac_pb2
+except ImportError:
+    from cli import generate_pb_files
+    generate_pb_files()
+    import opac_pb2
 
 
 class Client(object):
@@ -31,6 +37,9 @@ class Client(object):
         Return id of the asset, string of (UUID4)
         """
         fp = open(file, 'rb')
+
+        if not metadata:
+            metadata = {}
 
         if not isinstance(metadata, dict):
             raise ValueError('Param metadata must be a Dict.')
