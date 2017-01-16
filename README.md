@@ -12,7 +12,7 @@ Badges:
 Overview
 --------
 
-Client GRPC to OPAC SSM
+gRPC API of OPAC-SSM service
 
 Installation / Usage
 --------------------
@@ -26,7 +26,7 @@ Or clone the repo:
 
     $ git clone https://github.com/wdm0006/opac_ssm_api.git
     $ python setup.py install
-    
+
 Contributing
 ------------
 
