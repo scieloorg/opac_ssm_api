@@ -4,6 +4,11 @@ OPAC SSM GRPC API
 version number: 0.0.1
 author: SciELO
 
+Badges:
+-------
+[![Code Health](https://landscape.io/github/scieloorg/opac_ssm_api/master/landscape.svg?style=flat)](https://landscape.io/github/scieloorg/opac_ssm_api/master)
+[![Updates](https://pyup.io/repos/github/scieloorg/opac_ssm_api/shield.svg)](https://pyup.io/repos/github/scieloorg/opac_ssm_api/)
+
 Overview
 --------
 
