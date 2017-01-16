@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-__version__ = '0.0.1'
+__version__ = 'v0.0.1'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -20,10 +20,10 @@ dependency_links = [x.strip().replace('git+', '') for x in all_reqs if x.startsw
 setup(
     name='opac_ssm_api',
     version=__version__,
-    description='Client GRPC to OPAC SSM',
+    description='gRPC API of OPAC-SSM service',
     long_description=long_description,
-    url='https://github.com/wdm0006/opac_ssm_api',
-    download_url='https://github.com/wdm0006/opac_ssm_api/tarball/' + __version__,
+    url='https://github.com/scieloorg/opac_ssm_api',
+    download_url='https://github.com/scieloorg/opac_ssm_api/tarball/' + __version__,
     license='BSD',
     classifiers=[
       'Development Status :: 3 - Alpha',
