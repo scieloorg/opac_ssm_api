@@ -3,6 +3,7 @@ import os
 import grpc
 import six
 import logging
+from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
@@ -29,46 +30,51 @@ class Client(object):
         self.channel = grpc.insecure_channel('{0}:{1}'.format(host, port))
         self.stub = opac_pb2.AssetServiceStub(self.channel)
 
-    def add_asset(self, file, type='', metadata=''):
+    def add_asset(self, pfile, filename='', filetype='', metadata=''):
         """
         Add asset to SSM.
 
         Params:
-            :param file: file path (Mandatory)
-            :param type: string
+            :param pfile: pfile path (Mandatory) or a file pointer
+            :param filetype: string
             :param metadata: dict
+            :param metadata: filename is mandatory if pfile is a file pointer
 
         Return id of the asset, string of (UUID4)
         """
-
         if not metadata:
             metadata = {}
         elif not isinstance(metadata, dict):
             error_msg = 'Param "metadata" must be a Dict or None.'
             logger.exception(error_msg)
             raise ValueError(error_msg)
-        else:
-            error_msg = 'Param "metadata" must be a Dict or None.'
-            logger.exception(error_msg)
-            raise ValueError(error_msg)
 
         try:
-            if os.path.isfile(file) and os.access(file, os.R_OK):
-                with open(file, 'rb') as fp:
-                    filename = os.path.basename(getattr(fp, 'name', None))
-                    file_content = fp.read()
+            if hasattr(pfile, 'read'):
+                if not filename:
+                    error_msg = 'Param "filename" is required'
+                    logger.exception(error_msg)
+                    raise ValueError(error_msg)
+                else:
+                    filename = filename
+                    file_content = pfile.read()
             else:
-                error_msg = "The file pointed: (%s) is not a file or is unreadable."
-                logger.error(error_msg, file)
+                if os.path.isfile(pfile) and os.access(pfile, os.R_OK):
+                    with open(pfile, 'rb') as fp:
+                        filename = os.path.basename(getattr(fp, 'name', None))
+                        file_content = fp.read()
+                else:
+                    error_msg = "The file pointed: (%s) is not a file or is unreadable."
+                    logger.error(error_msg, pfile)
         except IOError as e:
             error_msg = "Error found when trying to open file: %s"
-            logger.exception(error_msg, file)
+            logger.exception(error_msg, pfile)
             raise e
         else:
             asset = opac_pb2.Asset(
                 file=file_content,
                 filename=filename,
-                type=type,
+                type=filetype,
                 metadata=str(metadata)
             )
 
