@@ -3,7 +3,6 @@ import os
 import grpc
 import six
 import logging
-from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
