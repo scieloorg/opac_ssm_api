@@ -1,7 +1,8 @@
 # coding: utf-8
 import os
-import grpc
 import six
+import grpc
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -74,7 +75,7 @@ class Client(object):
                 file=file_content,
                 filename=filename,
                 type=filetype,
-                metadata=str(metadata)
+                metadata=json.dumps(metadata)
             )
 
             return self.stub.add_asset(asset).id
