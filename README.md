@@ -27,3 +27,12 @@ Or clone the repo:
     $ git clone https://github.com/wdm0006/opac_ssm_api.git
     $ python setup.py install
 
+
+GRPC Server
+===========
+
+Command to generate GRPC class:
+
+.. code-block:: python
+
+    python -m grpc_tools.protoc -I opac_ssm_api --python_out=opac_ssm_api --grpc_python_out=opac_ssm_api opac_ssm_api/opac.proto
