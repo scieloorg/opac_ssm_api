@@ -33,6 +33,4 @@ GRPC Server
 
 Command to generate GRPC class:
 
-.. code-block:: python
-
     python -m grpc_tools.protoc -I opac_ssm_api --python_out=opac_ssm_api --grpc_python_out=opac_ssm_api opac_ssm_api/opac.proto
