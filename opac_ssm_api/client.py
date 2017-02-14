@@ -30,7 +30,7 @@ class Client(object):
         self.channel = grpc.insecure_channel('{0}:{1}'.format(host, port))
         self.stub = opac_pb2.AssetServiceStub(self.channel)
 
-    def add_asset(self, pfile, filename='', filetype='', metadata=''):
+    def add_asset(self, pfile, filename='', filetype='', metadata='', bucket=''):
         """
         Add asset to SSM.
 
@@ -39,6 +39,7 @@ class Client(object):
             :param filetype: string
             :param metadata: dict
             :param metadata: filename is mandatory if pfile is a file pointer
+            :param bucket: bucket is the name of bucket to asset
 
         Return id of the asset, string of (UUID4)
         """
@@ -75,7 +76,8 @@ class Client(object):
                 file=file_content,
                 filename=filename,
                 type=filetype,
-                metadata=json.dumps(metadata)
+                metadata=json.dumps(metadata),
+                bucket=bucket
             )
 
             return self.stub.add_asset(asset).id
@@ -99,6 +101,7 @@ class Client(object):
             'type': asset.type,
             'metadata': asset.metadata,
             'task_id': asset.task_id
+            'bucket': asset.bucket.name
         }
 
     def get_asset_info(self, id):
