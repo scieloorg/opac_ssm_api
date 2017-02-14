@@ -27,12 +27,3 @@ Or clone the repo:
     $ git clone https://github.com/wdm0006/opac_ssm_api.git
     $ python setup.py install
 
-Contributing
-------------
-
-TBD
-
-Example
--------
-
-TBD
