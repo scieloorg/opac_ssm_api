@@ -2,7 +2,6 @@
 # coding: UTF-8
 import os
 import requests
-import argparse
 import logging
 
 from grpc.tools import protoc
