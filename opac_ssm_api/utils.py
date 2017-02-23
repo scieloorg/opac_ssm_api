@@ -56,25 +56,3 @@ def generate_pb_files(host='localhost', port='80', proto_path='/static/proto/opa
         msg = "Error found when generating PB files. Exception: %s"
         logger.error(msg, str(e))
         raise e
-
-
-def main():
-
-    parser = argparse.ArgumentParser(
-            description='Command line to handler GRPC enviroment')
-
-    parser.add_argument(
-        '--url',
-        default=PROTO_URL_DEFAULT,
-        help='URL to .proto file, default is: %s' % PROTO_URL_DEFAULT)
-    args = parser.parse_args()
-
-    if args.url:
-        logger.info("Retrieving proto file from: %s", args.url)
-        generate_pb_files(url=args.url)
-    else:
-        raise ValueError("Invalid Argument. You must provide an 'url'")
-
-
-if __name__ == '__main__':
-    main()
