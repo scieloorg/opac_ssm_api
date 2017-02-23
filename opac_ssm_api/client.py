@@ -36,7 +36,7 @@ class Client(object):
         """
 
         if update_pb_class:
-            utils.generate_pb_files(HOST_NAME, HTTP_PROTO_PORT, PROTO_PATH)
+            utils.generate_pb_files(host, proto_http_port, proto_path)
             reload(opac_pb2)
 
         self.channel = grpc.insecure_channel('{0}:{1}'.format(host, port))
