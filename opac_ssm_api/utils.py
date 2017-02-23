@@ -10,13 +10,14 @@ from grpc.tools import protoc
 
 logger = logging.getLogger(__name__)
 PATH_PB_FILES = os.path.abspath(os.path.dirname(__file__))
-PROTO_URL_DEFAULT = 'http://localhost:8000/static/proto/opac.proto'
 
 
-def get_proto_file(url):
+def get_proto_file(host='localhost', port='80', proto_path='/static/proto/opac.proto'):
     """
     Get the proto file and save.
     """
+
+    url = 'http://{0}:{1}{2}'.format(host, port, proto_path)
 
     try:
         resp = requests.get(url)
@@ -36,12 +37,12 @@ def get_proto_file(url):
                 url, resp.status_code)
 
 
-def generate_pb_files(url=PROTO_URL_DEFAULT):
+def generate_pb_files(host='localhost', port='80', proto_path='/static/proto/opac.proto'):
     """
     Generete de pb classes.
     """
 
-    get_proto_file(url)
+    get_proto_file(host=host, port=port, proto_path=proto_path)
 
     try:
         protoc.main((
