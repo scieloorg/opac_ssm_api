@@ -33,6 +33,8 @@ class Client(object):
         Params:
             :param: host: string, default='localhost'
             :param: port: string, default='5000' (default of the SSM server service)
+            :param: proto_http_port: string, default='8001' (default of the HTTP server)
+            :param: proto_path: string, default='/static/proto/opac.proto' (default path to proto file)
         """
 
         if update_pb_class:
@@ -96,24 +98,24 @@ class Client(object):
 
         return self.stubAsset.add_asset(asset).id
 
-    def get_asset(self, id):
+    def get_asset(self, _id):
         """
         Get asset by id.
 
         Params:
-            :param id: string id of the asset (Mandatory)
+            :param _id: string id of the asset (Mandatory)
 
         Return dict with asset params
 
         Raise ValueError if param id is not a str|unicode
         """
 
-        if not isinstance(id, six.string_types):
-            msg = 'Param id must be a str|unicode.'
+        if not isinstance(_id, six.string_types):
+            msg = 'Param _id must be a str|unicode.'
             logger.exception(msg)
             raise ValueError(msg)
 
-        asset = self.stubAsset.get_asset(opac_pb2.TaskId(id=id))
+        asset = self.stubAsset.get_asset(opac_pb2.TaskId(id=_id))
 
         return {
             'file': asset.file,
@@ -124,44 +126,44 @@ class Client(object):
             'bucket': asset.bucket
         }
 
-    def get_asset_info(self, id):
+    def get_asset_info(self, _id):
         """
         Get asset info by id.
 
         Params:
-            :param id: string id of the asset (Mandatory)
+            :param _id: string id of the asset (Mandatory)
 
         Raise ValueError if param id is not a str|unicode
         """
 
-        if not isinstance(id, six.string_types):
-            msg = 'Param id must be a str|unicode.'
+        if not isinstance(_id, six.string_types):
+            msg = 'Param _id must be a str|unicode.'
             logger.exception(msg)
             raise ValueError(msg)
 
-        asset_info = self.stubAsset.get_asset_info(opac_pb2.TaskId(id=id))
+        asset_info = self.stubAsset.get_asset_info(opac_pb2.TaskId(id=_id))
 
         return {
             'url': asset_info.url,
             'url_path': asset_info.url_path
         }
 
-    def get_task_state(self, id):
+    def get_task_state(self, _id):
         """
         Get task state by id
 
         Params:
-            :param id: string id of the task (Mandatory)
+            :param _id: string id of the task (Mandatory)
 
         Raise ValueError if param id is not a str|unicode
         """
 
-        if not isinstance(id, six.string_types):
-            msg = 'Param id must be a str|unicode.'
+        if not isinstance(_id, six.string_types):
+            msg = 'Param _id must be a str|unicode.'
             logger.exception(msg)
             raise ValueError(msg)
 
-        task_state = self.stubAsset.get_task_state(opac_pb2.TaskId(id=id))
+        task_state = self.stubAsset.get_task_state(opac_pb2.TaskId(id=_id))
 
         return task_state.state
 
@@ -234,21 +236,21 @@ class Client(object):
             error_msg = "Dont exist asset with id: %s"
             logger.error(error_msg, uuid)
 
-    def remove_asset(self, id):
+    def remove_asset(self, _id):
         """
         Task to remove asset by id.
 
         Params:
-            :param id: UUID (Mandatory)
+            :param _id: UUID (Mandatory)
 
-        Raise ValueError if param id is not a str|unicode
+        Raise ValueError if param _id is not a str|unicode
         """
 
-        if not isinstance(id, six.string_types):
-            raise ValueError('Param "id" must be a str|unicode.')
+        if not isinstance(_id, six.string_types):
+            raise ValueError('Param "_id" must be a str|unicode.')
 
-        if self.stubAsset.exists_asset(opac_pb2.TaskId(id=id)):
-            return self.stubAsset.remove_asset(opac_pb2.TaskId(id=id))
+        if self.stubAsset.exists_asset(opac_pb2.TaskId(id=_id)):
+            return self.stubAsset.remove_asset(opac_pb2.TaskId(id=_id))
 
     def add_bucket(self, name):
         """
