@@ -16,11 +16,11 @@ HTTP_PROTO_PORT = os.getenv('OPAC_SSM_PORT', '8001')
 PROTO_PATH = os.getenv('OPAC_SSM_PROTO_FILE_PATH', '/static/proto/opac.proto')
 
 try:
-    import opac_pb2
+    from opac_ssm_api import opac_pb2
 except ImportError:
-    logger.warning("Retrieving proto file from URL: %s:%s%s", HOST_NAME, HTTP_PROTO_PORT, PROTO_PATH)
+    logger.warning("Retrieving proto file from URL: http://%s:%s%s", HOST_NAME, HTTP_PROTO_PORT, PROTO_PATH)
     utils.generate_pb_files(HOST_NAME, HTTP_PROTO_PORT, PROTO_PATH)
-    import opac_pb2
+    from opac_ssm_api import opac_pb2
 
 
 class Client(object):
