@@ -19,14 +19,140 @@ Installation / Usage
 
 To install use pip:
 
-    $ pip install opac_ssm_api
+    $ pip install -e git+https://git@github.com/scieloorg/opac_ssm_api@v0.1.1#egg=opac_ssm_api
 
 
 Or clone the repo:
 
-    $ git clone https://github.com/wdm0006/opac_ssm_api.git
+    $ git clone git@github.com:scieloorg/opac_ssm_api.git
     $ python setup.py install
 
+API Usage
+---------
+
+Create any instance of client and add new asset, return id of the task:
+
+```python
+from opac_ssm_api.client import Client
+cli = Client()
+cli.add_asset(pfile='data/fixtures/sample.img')
+'3fcc9270-1740-44a3-86ad-8b0a1b7b9774'
+```
+
+Get any asset:
+
+```python
+from opac_ssm_api.client import Client
+cli = Client()
+cli.get_asset('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
+{'bucket': 'UNKNOW',
+ 'file': b'A\xd8\x01\x00,
+ 'filename': '_mdb_catalog.wt',
+ 'metadata': '{}',
+ 'type': '',
+ 'uuid': '3fcc9270-1740-44a3-86ad-8b0a1b7b9774'}
+```
+
+Get URLs from asset:
+
+```python
+from opac_ssm_api.client import Client
+cli = Client()
+cli.get_asset_info('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
+{'url': 'http://static.opac.scielo.org/media/assets/1/_mdb_catalog.wt', 'url_path': '/media/assets/1/_mdb_catalog.wt'}
+```
+
+Get task state:
+
+```python
+from opac_ssm_api.client import Client
+cli = Client()
+cli.get_task_state('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
+'SUCCESS'
+```
+
+Update asset:
+
+```python
+from opac_ssm_api.client import Client
+cli = Client()
+help(cli.update_asset)
+Update asset to SSM.
+
+Params:
+    :param uuid: uuid to update
+    :param pfile: pfile path (Mandatory) or a file pointer
+    :param filetype: string
+    :param metadata: dict
+    :param filename: filename is mandatory if pfile is a file pointer
+    :param bucket_name: name of bucket
+
+Return id of the asset, string of (UUID4)
+
+Raise ValueError if param uuid is not a str|unicode
+
+cli.update_asset(uuid='3fcc9270-1740-44a3-86ad-8b0a1b7b9774', filetype="jpg")
+cli.get_task_state('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
+'SUCESS'
+cli.get_asset('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
+{'bucket': 'UNKNOW',
+ 'file': b'A\xd8\x01\x00,
+ 'filename': '_mdb_catalog.wt',
+ 'metadata': '{}',
+ 'type': 'jpg',
+ 'uuid': '3fcc9270-1740-44a3-86ad-8b0a1b7b9774'}
+```
+
+Remove any asset by id:
+
+```python
+from opac_ssm_api.client import Client
+cli = Client()
+cli.remove_asset('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
+'d9180f82-eb22-4c9c-b25c-56747986303c'
+cli.get_task_state('d9180f82-eb22-4c9c-b25c-56747986303c')
+'SUCCESS'
+cli.get_asset('d9180f82-eb22-4c9c-b25c-56747986303c')
+exception (its wrong)
+```
+
+
+Create a new bucket, return id of the task:
+
+```python
+cli.add_bucket('sample')
+'1d0ce52b-106f-4975-8827-07ea6f8ea573'
+````
+
+Create a new bucket, get the task id and check status:
+
+```python
+cli.add_bucket('sample')
+'1d0ce52b-106f-4975-8827-07ea6f8ea573'
+cli.get_task_state('1d0ce52b-106f-4975-8827-07ea6f8ea573')
+'SUCCESS'
+````
+
+The method ``get_task_state`` can return ['PENDING', 'STARTED', 'RETRY', 'FAILURE', 'SUCCESS']
+
+Remove any bucket
+
+```python
+cli.remove_bucket('sample')
+'b41d4912-cb34-4dc6-b862-f67e8257b112'
+cli.get_task_state('b41d4912-cb34-4dc6-b862-f67e8257b112')
+'SUCCESS'
+````
+
+Create a new bucket and update name, get the task id and check status:
+
+```python
+cli.add_bucket('sample')
+'1d0ce52b-106f-4975-8827-07ea6f8ea573'
+cli.update_bucket('sample', 'rename_sample')
+cli.get_task_state('1d0ce52b-106f-4975-8827-07ea6f8ea573')
+'SUCCESS'
+````
 
 GRPC Server
 ===========
