@@ -192,6 +192,8 @@ class Client(object):
 
         if self.stubAsset.exists_asset(opac_pb2.TaskId(id=uuid)):
 
+            update_params['uuid'] = uuid
+
             if not metadata:
                 update_params['metadata'] = json.dumps({})
             elif not isinstance(metadata, dict):
