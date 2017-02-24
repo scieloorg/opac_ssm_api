@@ -6,4 +6,4 @@ coverage==4.3.4
 pypi-publisher==0.0.4
 requests==2.13.0
 grpcio==1.1.0
-grpcio-tools==1.1.0
+grpcio-tools==1.1.3
