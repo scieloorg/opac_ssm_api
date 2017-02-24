@@ -1,7 +1,7 @@
 OPAC SSM GRPC API
 ===============================
 
-version number: 0.0.1
+version number: 0.1.2
 author: SciELO
 
 Badges:
@@ -19,7 +19,7 @@ Installation / Usage
 
 To install use pip:
 
-    $ pip install -e git+https://git@github.com/scieloorg/opac_ssm_api@v0.1.1#egg=opac_ssm_api
+    $ pip install -e git+https://git@github.com/scieloorg/opac_ssm_api@v0.1.2#egg=opac_ssm_api
 
 
 Or clone the repo:
