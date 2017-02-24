@@ -193,7 +193,7 @@ class Client(object):
         if self.stubAsset.exists_asset(opac_pb2.TaskId(id=uuid)):
 
             if not metadata:
-                update_params['metadata'] = {}
+                update_params['metadata'] = json.dumps({})
             elif not isinstance(metadata, dict):
                 error_msg = 'Param "metadata" must be a Dict or None.'
                 logger.exception(error_msg)
