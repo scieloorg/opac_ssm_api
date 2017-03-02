@@ -105,7 +105,8 @@ class Client(object):
         Params:
             :param _id: string id of the asset (Mandatory)
 
-        Return dict with asset params
+        Return tuple (True  ) when exist asset and tuple (False, {ERROR_MESSAGE})
+        when asset doesnt exist or other error.
 
         Raise ValueError if param id is not a str|unicode
         """
@@ -114,17 +115,20 @@ class Client(object):
             msg = 'Param _id must be a str|unicode.'
             logger.exception(msg)
             raise ValueError(msg)
-
-        asset = self.stubAsset.get_asset(opac_pb2.TaskId(id=_id))
-
-        return {
-            'file': asset.file,
-            'filename': asset.filename,
-            'type': asset.type,
-            'metadata': asset.metadata,
-            'uuid': asset.uuid,
-            'bucket': asset.bucket
-        }
+        try:
+            asset = self.stubAsset.get_asset(opac_pb2.TaskId(id=_id))
+        except Exception as e:
+            logger.error(e)
+            return (False, {'error_message': e.details()})
+        else:
+            return (True, {
+                            'file': asset.file,
+                            'filename': asset.filename,
+                            'type': asset.type,
+                            'metadata': asset.metadata,
+                            'uuid': asset.uuid,
+                            'bucket': asset.bucket
+                          })
 
     def get_asset_info(self, _id):
         """
@@ -133,6 +137,9 @@ class Client(object):
         Params:
             :param _id: string id of the asset (Mandatory)
 
+        Return tuple (True, Result) when exist asset and tuple (False, {ERROR_MESSAGE})
+        when asset doesnt exist or other error.
+
         Raise ValueError if param id is not a str|unicode
         """
 
@@ -141,12 +148,16 @@ class Client(object):
             logger.exception(msg)
             raise ValueError(msg)
 
-        asset_info = self.stubAsset.get_asset_info(opac_pb2.TaskId(id=_id))
+        try:
+            asset_info = self.stubAsset.get_asset_info(opac_pb2.TaskId(id=_id))
+        except Exception as e:
+            logger.error(e)
+            return (False, {'error_message': e.details()})
 
-        return {
-            'url': asset_info.url,
-            'url_path': asset_info.url_path
-        }
+        return (True, {
+                        'url': asset_info.url,
+                        'url_path': asset_info.url_path
+                    })
 
     def get_task_state(self, _id):
         """
