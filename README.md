@@ -39,18 +39,28 @@ cli.add_asset(pfile='data/fixtures/sample.img')
 '3fcc9270-1740-44a3-86ad-8b0a1b7b9774'
 ```
 
-Get any asset:
+Get any exist asset:
 
 ```python
 from opac_ssm_api.client import Client
 cli = Client()
 cli.get_asset('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
+(True,
 {'bucket': 'UNKNOW',
- 'file': b'A\xd8\x01\x00,
- 'filename': '_mdb_catalog.wt',
- 'metadata': '{}',
- 'type': '',
- 'uuid': '3fcc9270-1740-44a3-86ad-8b0a1b7b9774'}
+'file': b'#!/usr/bin/env bash\n\n# build the docs\ncd docs\nmake clean\nmake html\ncd ..\n\n# commit and push\ngit add -A\ngit commit -m "building and pushing docs"\ngit push origin master\n\n# switch branches and pull the data we want\ngit checkout gh-pages\nrm -rf .\ntouch .nojekyll\ngit checkout master docs/build/html\nmv ./docs/build/html/* ./\nrm -rf ./docs\ngit add -A\ngit commit -m "publishing updated docs..."\ngit push origin gh-pages\n\n# switch back\ngit checkout master',
+'filename': 'update_docs.sh',
+'metadata': '{}',
+'type': '',
+'uuid': '02aac94c-8654-4ea9-9906-29601692edcb'})
+```
+
+Get any inexist asset:
+
+```python
+from opac_ssm_api.client import Client
+cli = Client()
+cli.get_asset('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
+(False, {'error_message': 'Asset matching query does not exist.'})
 ```
 
 Get URLs from asset:
@@ -58,8 +68,14 @@ Get URLs from asset:
 ```python
 from opac_ssm_api.client import Client
 cli = Client()
+# Exist asset
 cli.get_asset_info('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
-{'url': 'http://static.opac.scielo.org/media/assets/1/_mdb_catalog.wt', 'url_path': '/media/assets/1/_mdb_catalog.wt'}
+(True, {'url': 'http://localhost:8001/media/assets/1248/update_docs_w7s25ZB.sh',
+       'url_path': '/media/assets/1248/update_docs_w7s25ZB.sh'})
+
+# Unexist asset
+cli.get_asset_info('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
+(False, {'error_message': 'Asset matching query does not exist.'})
 ```
 
 Get task state:
@@ -95,12 +111,12 @@ cli.update_asset(uuid='3fcc9270-1740-44a3-86ad-8b0a1b7b9774', filetype="jpg")
 cli.get_task_state('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
 'SUCESS'
 cli.get_asset('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
-{'bucket': 'UNKNOW',
- 'file': b'A\xd8\x01\x00,
- 'filename': '_mdb_catalog.wt',
- 'metadata': '{}',
- 'type': 'jpg',
- 'uuid': '3fcc9270-1740-44a3-86ad-8b0a1b7b9774'}
+(True, {'bucket': 'UNKNOW',
+        'file': b'A\xd8\x01\x00,
+        'filename': '_mdb_catalog.wt',
+        'metadata': '{}',
+        'type': 'jpg',
+        'uuid': '3fcc9270-1740-44a3-86ad-8b0a1b7b9774'})
 ```
 
 Remove any asset by id:
@@ -113,7 +129,7 @@ cli.remove_asset('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
 cli.get_task_state('d9180f82-eb22-4c9c-b25c-56747986303c')
 'SUCCESS'
 cli.get_asset('d9180f82-eb22-4c9c-b25c-56747986303c')
-exception (its wrong)
+(False, {'error_message': 'Asset matching query does not exist.'})
 ```
 
 
