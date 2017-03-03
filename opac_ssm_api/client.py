@@ -121,14 +121,38 @@ class Client(object):
             logger.error(e)
             return (False, {'error_message': e.details()})
         else:
-            return (True, {
-                            'file': asset.file,
-                            'filename': asset.filename,
-                            'type': asset.type,
-                            'metadata': asset.metadata,
-                            'uuid': asset.uuid,
-                            'bucket': asset.bucket
+            return (True, {'file': asset.file,
+                           'filename': asset.filename,
+                           'type': asset.type,
+                           'metadata': asset.metadata,
+                           'uuid': asset.uuid,
+                           'bucket': asset.bucket
                           })
+
+    def get_bucket(self, _id):
+        """
+        Get bucket by id of asset.
+
+        Params:
+            :param _id: string id of the asset (Mandatory)
+
+        Return tuple (True, Result) when exist asset and tuple (False, {ERROR_MESSAGE})
+        when asset doesnt exist or other error.
+
+        Raise ValueError if param id is not a str|unicode
+        """
+
+        if not isinstance(_id, six.string_types):
+            msg = 'Param _id must be a str|unicode.'
+            logger.exception(msg)
+            raise ValueError(msg)
+        try:
+            bucket = self.stubAsset.get_bucket(opac_pb2.TaskId(id=_id))
+        except Exception as e:
+            logger.error(e)
+            return (False, {'error_message': e.details()})
+        else:
+            return (True, {'name': bucket.name})
 
     def get_asset_info(self, _id):
         """
@@ -312,7 +336,7 @@ class Client(object):
 
     def remove_bucket(self, name):
         """
-        Task to remove bucket by name.
+        Remove bucket by name.
 
         Params:
             :param name: String (Mandatory)
@@ -326,3 +350,32 @@ class Client(object):
         if self.stubBucket.exists_bucket(opac_pb2.BucketName(name=name)):
             return self.stubBucket.remove_bucket(opac_pb2.BucketName(name=name))
 
+    def get_assets(self, name):
+        """
+        Return a list of asset by bucket.
+
+        Params:
+            :param name: String (Mandatory)
+
+        Raise ValueError if param name is not a str|unicode
+        """
+
+        result = []
+
+        if not isinstance(name, six.string_types):
+            msg = 'Param name must be a str|unicode.'
+            logger.exception(msg)
+            raise ValueError(msg)
+
+        assets = self.stubBucket.get_assets(opac_pb2.BucketName(name=name)).assets
+
+        for asset in assets:
+            result.append({'file': asset.file,
+                           'filename': asset.filename,
+                           'type': asset.type,
+                           'metadata': asset.metadata,
+                           'uuid': asset.uuid,
+                           'bucket': asset.bucket
+                          })
+
+        return result
