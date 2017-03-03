@@ -1,7 +1,7 @@
 OPAC SSM GRPC API
 ===============================
 
-version number: 0.1.3
+version number: 0.1.4
 author: SciELO
 
 Badges:
