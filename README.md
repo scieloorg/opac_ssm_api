@@ -51,7 +51,7 @@ cli.get_asset('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
 'filename': 'update_docs.sh',
 'metadata': '{}',
 'type': '',
-'uuid': '02aac94c-8654-4ea9-9906-29601692edcb'})
+'uuid': '3fcc9270-1740-44a3-86ad-8b0a1b7b9774'})
 ```
 
 Get any inexist asset:
