@@ -13,7 +13,7 @@ from opac_ssm_api import utils
 HOST_NAME = os.getenv('OPAC_SSM_GRPC_SERVER_HOST', 'localhost')
 HOST_PORT = os.getenv('OPAC_SSM_GRPC_SERVER_PORT', '5000')
 
-HOST_PROTO_NAME = os.getenv('HOST_PROTO_NAME', 'raw.githubusercontent.com')
+HOST_PROTO_NAME = os.getenv('OPAC_HOST_PROTO_NAME', 'raw.githubusercontent.com')
 HTTP_PROTO_PORT = os.getenv('OPAC_SSM_PORT', '80')
 PROTO_PATH = os.getenv('OPAC_SSM_PROTO_FILE_PATH', '/scieloorg/opac_ssm/master/grpc_ssm/opac.proto')
 
