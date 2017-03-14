@@ -12,14 +12,16 @@ from opac_ssm_api import utils
 
 HOST_NAME = os.getenv('OPAC_SSM_GRPC_SERVER_HOST', 'localhost')
 HOST_PORT = os.getenv('OPAC_SSM_GRPC_SERVER_PORT', '5000')
-HTTP_PROTO_PORT = os.getenv('OPAC_SSM_PORT', '8001')
-PROTO_PATH = os.getenv('OPAC_SSM_PROTO_FILE_PATH', '/static/proto/opac.proto')
+
+HOST_PROTO_NAME = os.getenv('HOST_NAME_PROTO', 'raw.githubusercontent.com')
+HTTP_PROTO_PORT = os.getenv('OPAC_SSM_PORT', '80')
+PROTO_PATH = os.getenv('OPAC_SSM_PROTO_FILE_PATH', '/scieloorg/opac_ssm/master/grpc_ssm/opac.proto')
 
 try:
     from opac_ssm_api import opac_pb2
 except ImportError:
-    logger.warning("Retrieving proto file from URL: http://%s:%s%s", HOST_NAME, HTTP_PROTO_PORT, PROTO_PATH)
-    utils.generate_pb_files(HOST_NAME, HTTP_PROTO_PORT, PROTO_PATH)
+    logger.warning("Retrieving proto file from URL: http://%s:%s%s", HOST_PROTO_NAME, HTTP_PROTO_PORT, PROTO_PATH)
+    utils.generate_pb_files(HOST_PROTO_NAME, HTTP_PROTO_PORT, PROTO_PATH)
     from opac_ssm_api import opac_pb2
 
 
