@@ -13,9 +13,10 @@ from opac_ssm_api import utils
 HOST_NAME = os.getenv('OPAC_SSM_GRPC_SERVER_HOST', 'localhost')
 HOST_PORT = os.getenv('OPAC_SSM_GRPC_SERVER_PORT', '5000')
 
-HOST_PROTO_NAME = os.getenv('OPAC_HOST_PROTO_NAME', 'raw.githubusercontent.com')
-HTTP_PROTO_PORT = os.getenv('OPAC_SSM_PORT', '80')
+HOST_PROTO_NAME = os.getenv('OPAC_SSM_PROTO_FILE_HOST', 'raw.githubusercontent.com')
+HTTP_PROTO_PORT = os.getenv('OPAC_SSM_PROTO_FILE_PORT', '80')
 PROTO_PATH = os.getenv('OPAC_SSM_PROTO_FILE_PATH', '/scieloorg/opac_ssm/master/grpc_ssm/opac.proto')
+PROTO_UPDATE = os.getenv('OPAC_SSM_PROTO_UPDATE', 'False') == 'True'
 
 try:
     from opac_ssm_api import opac_pb2
@@ -28,7 +29,7 @@ except ImportError:
 class Client(object):
 
     def __init__(self, host=HOST_NAME, port=HOST_PORT, proto_http_port=HTTP_PROTO_PORT,
-                 proto_path=PROTO_PATH, update_pb_class=False):
+                 proto_path=PROTO_PATH, update_pb_class=PROTO_UPDATE):
         """
         Initialize channel and stub objects.
 
@@ -38,7 +39,7 @@ class Client(object):
             :param: proto_http_port: string, default='8001' (default of the HTTP server)
             :param: proto_path: string, default='/static/proto/opac.proto' (default path to proto file)
         """
-
+        import pdb; pdb.set_trace()
         if update_pb_class:
             utils.generate_pb_files(host, proto_http_port, proto_path)
             reload(opac_pb2)
