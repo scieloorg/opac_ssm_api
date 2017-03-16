@@ -39,7 +39,6 @@ class Client(object):
             :param: proto_http_port: string, default='8001' (default of the HTTP server)
             :param: proto_path: string, default='/static/proto/opac.proto' (default path to proto file)
         """
-        import pdb; pdb.set_trace()
         if update_pb_class:
             utils.generate_pb_files(host, proto_http_port, proto_path)
             reload(opac_pb2)
