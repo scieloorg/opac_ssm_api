@@ -8,6 +8,9 @@ from imp import reload
 
 logger = logging.getLogger(__name__)
 
+from grpc_health.v1 import health
+from grpc_health.v1 import health_pb2
+
 from opac_ssm_api import utils
 
 HOST_NAME = os.getenv('OPAC_SSM_GRPC_SERVER_HOST', 'localhost')
@@ -46,6 +49,37 @@ class Client(object):
         self.channel = grpc.insecure_channel('{0}:{1}'.format(host, port))
         self.stubAsset = opac_pb2.AssetServiceStub(self.channel)
         self.stubBucket = opac_pb2.BucketServiceStub(self.channel)
+        self.stubHealth = health_pb2.HealthStub(self.channel)
+
+    def status(self, service_name=''):
+        """
+        Check service status.
+
+        Params:
+            :param service_name: service name.
+
+        Return string: UNKNOWN, SERVING
+        """
+        expected_response_status = {
+            0: "NOT SERVING",
+            1: "SERVING",
+            2: "UNKNOWN",
+            3: "NOT FOUND",
+        }
+
+        request = health_pb2.HealthCheckRequest(service=service_name)
+
+        try:
+            resp = self.stubHealth.Check(request)
+        except grpc.RpcError as e:
+            if grpc.StatusCode.NOT_FOUND == e.code():
+                return expected_response_status[3]
+            elif grpc.StatusCode.UNAVAILABLE == e.code():
+                return expected_response_status[0]
+            else:
+                return expected_response_status[2]
+        else:
+            return expected_response_status[resp.status]
 
     def add_asset(self, pfile, filename='', filetype='', metadata='',
                   bucket_name='UNKNOW'):
