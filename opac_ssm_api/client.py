@@ -8,7 +8,6 @@ from imp import reload
 
 logger = logging.getLogger(__name__)
 
-from grpc_health.v1 import health
 from grpc_health.v1 import health_pb2
 
 from opac_ssm_api import utils
