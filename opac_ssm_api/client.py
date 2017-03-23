@@ -20,6 +20,9 @@ HTTP_PROTO_PORT = os.getenv('OPAC_SSM_PROTO_FILE_PORT', '80')
 PROTO_PATH = os.getenv('OPAC_SSM_PROTO_FILE_PATH', '/scieloorg/opac_ssm/master/grpc_ssm/opac.proto')
 PROTO_UPDATE = os.getenv('OPAC_SSM_PROTO_UPDATE', 'False') == 'True'
 
+MAX_RECEIVE_MESSAGE_LENGTH = os.getenv('MAX_RECEIVE_MESSAGE_LENGTH', 90 * 1024 * 1024)  # 90MB
+MAX_SEND_MESSAGE_LENGTH = os.getenv('MAX_SEND_MESSAGE_LENGTH', 90 * 1024 * 1024)  # 90MB
+
 try:
     from opac_ssm_api import opac_pb2
 except ImportError:
@@ -45,7 +48,10 @@ class Client(object):
             utils.generate_pb_files(host, proto_http_port, proto_path)
             reload(opac_pb2)
 
-        self.channel = grpc.insecure_channel('{0}:{1}'.format(host, port))
+        options = [('grpc.max_receive_message_length', MAX_RECEIVE_MESSAGE_LENGTH),
+                   ('grpc.max_send_message_length', MAX_SEND_MESSAGE_LENGTH)]
+
+        self.channel = grpc.insecure_channel('{0}:{1}'.format(host, port), options)
         self.stubAsset = opac_pb2.AssetServiceStub(self.channel)
         self.stubBucket = opac_pb2.BucketServiceStub(self.channel)
         self.stubHealth = health_pb2.HealthStub(self.channel)
