@@ -20,8 +20,8 @@ HTTP_PROTO_PORT = os.getenv('OPAC_SSM_PROTO_FILE_PORT', '80')
 PROTO_PATH = os.getenv('OPAC_SSM_PROTO_FILE_PATH', '/scieloorg/opac_ssm/master/grpc_ssm/opac.proto')
 PROTO_UPDATE = os.getenv('OPAC_SSM_PROTO_UPDATE', 'False') == 'True'
 
-MAX_RECEIVE_MESSAGE_LENGTH = os.getenv('MAX_RECEIVE_MESSAGE_LENGTH', 90 * 1024 * 1024)  # 90MB
-MAX_SEND_MESSAGE_LENGTH = os.getenv('MAX_SEND_MESSAGE_LENGTH', 90 * 1024 * 1024)  # 90MB
+MAX_RECEIVE_MESSAGE_LENGTH = int(os.getenv('MAX_RECEIVE_MESSAGE_LENGTH', 90 * 1024 * 1024))  # 90MB
+MAX_SEND_MESSAGE_LENGTH = int(os.getenv('MAX_SEND_MESSAGE_LENGTH', 90 * 1024 * 1024))  # 90MB
 
 try:
     from opac_ssm_api import opac_pb2
