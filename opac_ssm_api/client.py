@@ -6,11 +6,11 @@ import json
 import logging
 from imp import reload
 
-logger = logging.getLogger(__name__)
-
 from grpc_health.v1 import health_pb2
 
 from opac_ssm_api import utils
+
+logger = logging.getLogger(__name__)
 
 HOST_NAME = os.getenv('OPAC_SSM_GRPC_SERVER_HOST', 'localhost')
 HOST_PORT = os.getenv('OPAC_SSM_GRPC_SERVER_PORT', '5000')
@@ -27,7 +27,7 @@ try:
     from opac_ssm_api import opac_pb2
 except ImportError:
     logger.warning("Retrieving proto file from URL: http://%s:%s%s", HOST_PROTO_NAME, HTTP_PROTO_PORT, PROTO_PATH)
-    utils.generate_pb_files(HOST_PROTO_NAME, HTTP_PROTO_PORT, PROTO_PATH)
+    utils.generate_pb_files(host=HOST_PROTO_NAME, port=HTTP_PROTO_PORT, proto_path=PROTO_PATH)
     from opac_ssm_api import opac_pb2
 
 
@@ -167,8 +167,78 @@ class Client(object):
                            'type': asset.type,
                            'metadata': asset.metadata,
                            'uuid': asset.uuid,
-                           'bucket': asset.bucket
-                          })
+                           'bucket': asset.bucket,
+                           'checksum': asset.checksum})
+
+    def query_asset(self, checksum, metadata=None):
+        """
+        Get assets by checksum and any metadata.
+
+        Params:
+            :param checksum: String
+            :param metadata: JSON with metadada about asset
+
+        Return a list of asset(dict) with all metadata, look:
+
+        [
+            {
+                "type": "pdf",
+                "asset_url": "media/assets/resp/v78n3/editorial.pdf",
+                "bucket_name": "resp/v78n3",
+                "checksum": "29a44233da06c80e36a6c73bfd4bc76f78b1e41d18f6fcac5801948c28b160ab",
+                "filename": "editorial.pdf",
+                "uuid": "9ad6762b-48fa-4ac3-9804-6cc554e78300",
+                "metadata": {
+                    "lang": "es",
+                    "article_pid":"S1135-57272004000300001",
+                    "registration_date": "2017-04-06T12:55:40.731500",
+                    "bucket_name": "resp/v78n3",
+                    "article_folder": "editorial",
+                    "issue_folder": "v78n3",
+                    "journal_folder": "resp"
+                }
+            }
+        ]
+        """
+
+        if not isinstance(checksum, six.string_types):
+            msg = 'Param checksum must be a str|unicode.'
+            logger.exception(msg)
+            raise ValueError(msg)
+
+        if not metadata:
+            metadata = {}
+        elif not isinstance(metadata, dict):
+            error_msg = 'Param "metadata" must be a Dict or None.'
+            logger.error(error_msg)
+            raise ValueError(error_msg)
+
+        meta = json.dumps(metadata)
+
+        assets = self.stubAsset.query(opac_pb2.Asset(checksum=checksum,
+                                                     metadata=meta)).assets
+
+        ret_list = []
+
+        if assets:
+
+            dict_asset = {}
+
+            for asset in assets:
+                dict_asset['type'] = asset.type
+                dict_asset['absolute_url'] = asset.absolute_url
+                dict_asset['full_absolute_url'] = asset.full_absolute_url
+                dict_asset['bucket'] = asset.bucket
+                dict_asset['checksum'] = asset.checksum
+                dict_asset['filename'] = asset.filename
+                dict_asset['uuid'] = asset.uuid
+                dict_asset['metadata'] = asset.metadata
+                dict_asset['created_at'] = asset.created_at
+                dict_asset['updated_at'] = asset.updated_at
+
+                ret_list.append(dict_asset)
+
+        return ret_list
 
     def get_bucket(self, _id):
         """
@@ -221,7 +291,8 @@ class Client(object):
 
         return (True, {
                         'url': asset_info.url,
-                        'url_path': asset_info.url_path
+                        'url_path': asset_info.url_path,
+                        'checksum': asset_info.checksum
                     })
 
     def get_task_state(self, _id):
@@ -416,7 +487,7 @@ class Client(object):
                            'type': asset.type,
                            'metadata': asset.metadata,
                            'uuid': asset.uuid,
-                           'bucket': asset.bucket
-                          })
+                           'bucket': asset.bucket,
+                           'checksum': asset.checksum})
 
         return result
