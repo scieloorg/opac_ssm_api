@@ -291,8 +291,7 @@ class Client(object):
 
         return (True, {
                         'url': asset_info.url,
-                        'url_path': asset_info.url_path,
-                        'checksum': asset_info.checksum
+                        'url_path': asset_info.url_path
                     })
 
     def get_task_state(self, _id):
