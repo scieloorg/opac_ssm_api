@@ -170,12 +170,12 @@ class Client(object):
                            'bucket': asset.bucket,
                            'checksum': asset.checksum})
 
-    def query_asset(self, checksum, metadata=None):
+    def query_asset(self, filters=None, metadata=None):
         """
-        Get assets by checksum and any metadata.
+        Get assets by any filters and any metadata.
 
         Params:
-            :param checksum: String
+            :param filters: Dictionary
             :param metadata: JSON with metadada about asset
 
         Return a list of asset(dict) with all metadata, look:
@@ -201,22 +201,22 @@ class Client(object):
         ]
         """
 
-        if not isinstance(checksum, six.string_types):
-            msg = 'Param checksum must be a str|unicode.'
-            logger.exception(msg)
-            raise ValueError(msg)
-
-        if not metadata:
-            metadata = {}
-        elif not isinstance(metadata, dict):
-            error_msg = 'Param "metadata" must be a Dict or None.'
+        if filters is None:
+            filters = {}
+        elif not isinstance(filters, dict):
+            error_msg = 'Param "filters" must be a Dict or None.'
             logger.error(error_msg)
             raise ValueError(error_msg)
 
-        meta = json.dumps(metadata)
+        if metadata:
+            if isinstance(metadata, str):
+                filters['metadata'] = metadata
+            elif isinstance(metadata, dict):
+                filters['metadata'] = json.dumps(metadata)
+            else:
+                raise ValueError("Metadada must be a dict or str")
 
-        assets = self.stubAsset.query(opac_pb2.Asset(checksum=checksum,
-                                                     metadata=meta)).assets
+        assets = self.stubAsset.query(opac_pb2.Asset(**filters)).assets
 
         ret_list = []
 
@@ -314,7 +314,7 @@ class Client(object):
         return task_state.state
 
     def update_asset(self, uuid, pfile=None, filename=None, filetype=None, metadata=None,
-                    bucket_name=None):
+                     bucket_name=None):
         """
         Update asset to SSM.
 
