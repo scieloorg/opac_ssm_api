@@ -24,11 +24,11 @@ MAX_RECEIVE_MESSAGE_LENGTH = int(os.getenv('MAX_RECEIVE_MESSAGE_LENGTH', 90 * 10
 MAX_SEND_MESSAGE_LENGTH = int(os.getenv('MAX_SEND_MESSAGE_LENGTH', 90 * 1024 * 1024))  # 90MB
 
 try:
-    from opac_ssm_api import opac_pb2
+    from opac_ssm_api import opac_pb2_grpc
 except ImportError:
     logger.warning("Retrieving proto file from URL: http://%s:%s%s", HOST_PROTO_NAME, HTTP_PROTO_PORT, PROTO_PATH)
     utils.generate_pb_files(host=HOST_PROTO_NAME, port=HTTP_PROTO_PORT, proto_path=PROTO_PATH)
-    from opac_ssm_api import opac_pb2
+    from opac_ssm_api import opac_pb2_grpc
 
 
 class Client(object):
@@ -46,14 +46,14 @@ class Client(object):
         """
         if update_pb_class:
             utils.generate_pb_files(host, proto_http_port, proto_path)
-            reload(opac_pb2)
+            reload(opac_pb2_grpc)
 
         options = [('grpc.max_receive_message_length', MAX_RECEIVE_MESSAGE_LENGTH),
                    ('grpc.max_send_message_length', MAX_SEND_MESSAGE_LENGTH)]
 
         self.channel = grpc.insecure_channel('{0}:{1}'.format(host, port), options)
-        self.stubAsset = opac_pb2.AssetServiceStub(self.channel)
-        self.stubBucket = opac_pb2.BucketServiceStub(self.channel)
+        self.stubAsset = opac_pb2_grpc.AssetServiceStub(self.channel)
+        self.stubBucket = opac_pb2_grpc.BucketServiceStub(self.channel)
         self.stubHealth = health_pb2.HealthStub(self.channel)
 
     def status(self, service_name=''):
@@ -129,7 +129,7 @@ class Client(object):
                 logger.error(error_msg, pfile)
                 raise IOError(error_msg)
 
-        asset = opac_pb2.Asset(
+        asset = opac_pb2_grpc.Asset(
             file=file_content,
             filename=filename,
             type=filetype,
@@ -157,7 +157,7 @@ class Client(object):
             logger.exception(msg)
             raise ValueError(msg)
         try:
-            asset = self.stubAsset.get_asset(opac_pb2.TaskId(id=_id))
+            asset = self.stubAsset.get_asset(opac_pb2_grpc.TaskId(id=_id))
         except Exception as e:
             logger.error(e)
             return (False, {'error_message': e.details()})
@@ -216,7 +216,7 @@ class Client(object):
             else:
                 raise ValueError("Metadada must be a dict or str")
 
-        assets = self.stubAsset.query(opac_pb2.Asset(**filters)).assets
+        assets = self.stubAsset.query(opac_pb2_grpc.Asset(**filters)).assets
 
         ret_list = []
 
@@ -258,7 +258,7 @@ class Client(object):
             logger.exception(msg)
             raise ValueError(msg)
         try:
-            bucket = self.stubAsset.get_bucket(opac_pb2.TaskId(id=_id))
+            bucket = self.stubAsset.get_bucket(opac_pb2_grpc.TaskId(id=_id))
         except Exception as e:
             logger.error(e)
             return (False, {'error_message': e.details()})
@@ -284,7 +284,7 @@ class Client(object):
             raise ValueError(msg)
 
         try:
-            asset_info = self.stubAsset.get_asset_info(opac_pb2.TaskId(id=_id))
+            asset_info = self.stubAsset.get_asset_info(opac_pb2_grpc.TaskId(id=_id))
         except Exception as e:
             logger.error(e)
             return (False, {'error_message': e.details()})
@@ -309,7 +309,7 @@ class Client(object):
             logger.exception(msg)
             raise ValueError(msg)
 
-        task_state = self.stubAsset.get_task_state(opac_pb2.TaskId(id=_id))
+        task_state = self.stubAsset.get_task_state(opac_pb2_grpc.TaskId(id=_id))
 
         return task_state.state
 
@@ -336,7 +336,7 @@ class Client(object):
 
         update_params = {}
 
-        if self.stubAsset.exists_asset(opac_pb2.TaskId(id=uuid)):
+        if self.stubAsset.exists_asset(opac_pb2_grpc.TaskId(id=uuid)):
 
             update_params['uuid'] = uuid
 
@@ -377,7 +377,7 @@ class Client(object):
             if bucket_name:
                 update_params['bucket'] = bucket_name
 
-            asset = opac_pb2.Asset(**update_params)
+            asset = opac_pb2_grpc.Asset(**update_params)
 
             return self.stubAsset.update_asset(asset).id
         else:
@@ -397,8 +397,8 @@ class Client(object):
         if not isinstance(_id, six.string_types):
             raise ValueError('Param "_id" must be a str|unicode.')
 
-        if self.stubAsset.exists_asset(opac_pb2.TaskId(id=_id)):
-            return self.stubAsset.remove_asset(opac_pb2.TaskId(id=_id))
+        if self.stubAsset.exists_asset(opac_pb2_grpc.TaskId(id=_id)):
+            return self.stubAsset.remove_asset(opac_pb2_grpc.TaskId(id=_id))
 
     def add_bucket(self, name):
         """
