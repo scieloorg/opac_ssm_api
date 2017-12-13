@@ -336,7 +336,7 @@ class Client(object):
 
         update_params = {}
 
-        if self.stubAsset.exists_asset(opac_pb2.TaskId(id=uuid)):
+        if self.stubAsset.exists_asset(opac_pb2_grpc.TaskId(id=uuid)):
 
             update_params['uuid'] = uuid
 
