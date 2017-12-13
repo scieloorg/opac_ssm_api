@@ -8,7 +8,7 @@ from imp import reload
 
 from grpc_health.v1 import health_pb2
 
-import utils
+from opac_ssm_api import utils
 
 logger = logging.getLogger(__name__)
 
@@ -24,11 +24,11 @@ MAX_RECEIVE_MESSAGE_LENGTH = int(os.getenv('MAX_RECEIVE_MESSAGE_LENGTH', 90 * 10
 MAX_SEND_MESSAGE_LENGTH = int(os.getenv('MAX_SEND_MESSAGE_LENGTH', 90 * 1024 * 1024))  # 90MB
 
 try:
-    import opac_pb2_grpc, opac_pb2
+    from opac_ssm_api import opac_pb2_grpc, opac_pb2
 except ImportError:
     logger.warning("Retrieving proto file from URL: http://%s:%s%s", HOST_PROTO_NAME, HTTP_PROTO_PORT, PROTO_PATH)
     utils.generate_pb_files(host=HOST_PROTO_NAME, port=HTTP_PROTO_PORT, proto_path=PROTO_PATH)
-    import opac_pb2_grpc, opac_pb2
+    from opac_ssm_api import opac_pb2_grpc, opac_pb2
 
 
 class Client(object):
