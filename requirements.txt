@@ -6,5 +6,5 @@ coverage==4.4.2
 pypi-publisher==0.0.4
 requests==2.18.4
 grpcio==1.6.0
-grpcio-tools==1.6.0
+grpcio-tools==1.15.0
 grpcio-health-checking==1.6.0
