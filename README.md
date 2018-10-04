@@ -112,7 +112,7 @@ cli.get_task_state('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
 'SUCESS'
 cli.get_asset('3fcc9270-1740-44a3-86ad-8b0a1b7b9774')
 (True, {'bucket': 'UNKNOW',
-        'file': b'A\xd8\x01\x00,
+        'file': b'A\xd8\x01\x00',
         'filename': '_mdb_catalog.wt',
         'metadata': '{}',
         'type': 'jpg',
