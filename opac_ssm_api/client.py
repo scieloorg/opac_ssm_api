@@ -7,6 +7,7 @@ import logging
 from imp import reload
 
 from grpc_health.v1 import health_pb2
+from grpc_health.v1 import health_pb2_grpc
 
 from opac_ssm_api import utils
 
@@ -54,7 +55,7 @@ class Client(object):
         self.channel = grpc.insecure_channel('{0}:{1}'.format(host, port), options)
         self.stubAsset = opac_pb2_grpc.AssetServiceStub(self.channel)
         self.stubBucket = opac_pb2_grpc.BucketServiceStub(self.channel)
-        self.stubHealth = health_pb2.HealthStub(self.channel)
+        self.stubHealth = health_pb2_grpc.HealthStub(self.channel)
 
     def status(self, service_name=''):
         """
