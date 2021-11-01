@@ -1,6 +1,6 @@
 # Dev/Deployment
 nose==1.3.7
-coverage==4.4.2
+coverage==6.1.1
 requests==2.20.1
 grpcio==1.15.0
 grpcio-tools==1.15.0
